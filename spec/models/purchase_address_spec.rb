@@ -69,6 +69,16 @@ RSpec.describe PurchaseAddress, type: :model do
         @purchase_address.valid?
         expect(@purchase_address.errors.full_messages).to include('Phone number is invalid. Input half-width characters.')
       end
+      it 'phone_numberが9桁以下では保存できないこと' do
+        @purchase_address.phone_number = '090123456'
+        @purchase_address.valid?
+        expect(@purchase_address.errors.full_messages).to include('Phone number is invalid. Input half-width characters.')
+      end 
+      it 'phone_numberが12桁以上では保存できないこと' do
+        @purchase_address.phone_number = '090123456789'
+        @purchase_address.valid?
+        expect(@purchase_address.errors.full_messages).to include('Phone number is invalid. Input half-width characters.')
+      end 
     end
   end
 end
