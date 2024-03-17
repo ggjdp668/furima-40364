@@ -1,4 +1,6 @@
 class PurchasesController < ApplicationController
+  before_action :check_redirect, only: [:index]
+
   def index
     gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
     @item = Item.find(params[:item_id])
@@ -30,5 +32,18 @@ class PurchasesController < ApplicationController
       card: purchase_params[:token],
       currency: 'jpy'
     )
+  end
+
+  def check_redirect
+    @item = Item.find(params[:item_id])
+    if user_signed_in?
+      if @item.purchase.present? && @item.user_id != current_user.id
+        redirect_to root_path
+      elsif @item.user_id == current_user.id
+        redirect_to root_path
+      end
+    else
+      redirect_to new_user_session_path
+    end
   end
 end
